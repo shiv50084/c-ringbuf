@@ -48,7 +48,7 @@ static rb_malloc_fun __malloc_fun = NULL;
 static rb_free_fun __free_fun = NULL;
 #endif
 
-void ringbuf_init(rb_malloc_fun malloc_fun, rb_free_fun free_fun)
+void ringbuf_init_mem(rb_malloc_fun malloc_fun, rb_free_fun free_fun)
 {
     assert(malloc_fun != NULL);
     assert(free_fun != NULL);

@@ -43,7 +43,7 @@ typedef struct ringbuf_t *ringbuf_t;
 typedef void *(*rb_malloc_fun)(size_t size);
 typedef void (*rb_free_fun)(void *ptr);
 
-void ringbuf_init(rb_malloc_fun malloc_fun, rb_free_fun free_fun);
+void ringbuf_init_mem(rb_malloc_fun malloc_fun, rb_free_fun free_fun);
 
 /*
  * Create a new ring buffer with the given capacity (usable
