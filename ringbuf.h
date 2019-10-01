@@ -29,7 +29,14 @@
 #include <stddef.h>
 #include <sys/types.h>
 
+#define RB_STATIC_BUFFER(name, size) unsigned char __rb_#name[size + 1]
+
 typedef struct ringbuf_t *ringbuf_t;
+
+typedef void *(*rb_malloc_fun)(size_t size);
+typedef void (*rb_free_fun)(void *ptr);
+
+void ringbuf_init(rb_malloc_fun malloc_fun, rb_free_fun free_fun);
 
 /*
  * Create a new ring buffer with the given capacity (usable
@@ -41,6 +48,9 @@ typedef struct ringbuf_t *ringbuf_t;
  */
 ringbuf_t
 ringbuf_new(size_t capacity);
+
+ringbuf_t
+ringbuf_new_static(size_t capacity, unsigned char *buf, size_t buf_size);
 
 /*
  * The size of the internal buffer, in bytes. One or more bytes may be
