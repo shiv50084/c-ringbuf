@@ -35,8 +35,8 @@
 #define ssize_t intptr_t
 #endif
 
-#define RB_STATIC_BUFFER_ALLOCATE(name, size) unsigned char __rb_#name[size + 1]
-#define RB_STATIC_BUFFER(name) __rb_#name
+#define RB_STATIC_BUFFER_ALLOCATE(name, size) unsigned char __rb_##name[size + 1]
+#define RB_STATIC_BUFFER(name) __rb_##name
 
 typedef struct ringbuf_t *ringbuf_t;
 
