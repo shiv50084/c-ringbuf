@@ -29,6 +29,12 @@
 #include <stddef.h>
 #include <sys/types.h>
 
+#ifdef __CROSSWORKS_ARM
+#include <stddef.h>
+#include <stdint.h>
+#define ssize_t intptr_t
+#endif
+
 #define RB_STATIC_BUFFER(name, size) unsigned char __rb_#name[size + 1]
 
 typedef struct ringbuf_t *ringbuf_t;
