@@ -38,20 +38,57 @@ struct ringbuf_t
     size_t size;
 };
 
+#if defined(__MINGW32__) || defined(__linux__) || defined(__unix__) || defined(_WIN32)
+static rb_malloc_fun __malloc_fun = malloc;
+static rb_free_fun __free_fun = free;
+#else
+static rb_malloc_fun __malloc_fun = NULL;
+static rb_free_fun __free_fun = NULL;
+#endif
+
+void ringbuf_init(rb_malloc_fun malloc_fun, rb_free_fun free_fun)
+{
+    assert(malloc_fun != NULL);
+    assert(free_fun != NULL);
+    __malloc_fun = malloc_fun;
+    __free_fun = free_fun;
+}
+
 ringbuf_t
 ringbuf_new(size_t capacity)
 {
-    ringbuf_t rb = malloc(sizeof(struct ringbuf_t));
+    ringbuf_t rb = __malloc_fun(sizeof(struct ringbuf_t));
     if (rb) {
 
         /* One byte is used for detecting the full condition. */
         rb->size = capacity + 1;
-        rb->buf = malloc(rb->size);
+        rb->buf = __malloc_fun(rb->size);
         if (rb->buf)
             ringbuf_reset(rb);
         else {
-            free(rb);
+            __free_fun(rb);
             return 0;
+        }
+    }
+    return rb;
+}
+
+ringbuf_t
+ringbuf_new_static(size_t capacity, unsigned char *buf, size_t buf_size)
+{
+    assert(capacity + 1 == buf_size);
+    ringbuf_t rb = __malloc_fun(sizeof(struct ringbuf_t));
+
+    if (rb)
+    {
+        rb->size = capacity + 1;
+        rb->buf = buf;
+        if (rb->buf) {
+          ringbuf_reset(rb);
+        }
+        else {
+            __free_fun(rb);
+            return NULL;
         }
     }
     return rb;
@@ -73,9 +110,18 @@ void
 ringbuf_free(ringbuf_t *rb)
 {
     assert(rb && *rb);
-    free((*rb)->buf);
-    free(*rb);
+    __free_fun((*rb)->buf);
+    __free_fun(*rb);
     *rb = 0;
+}
+
+void
+ringbuf_static_free(ringbuf_t *rb)
+{
+    if (rb && *rb) {
+        __free_fun(*rb);
+        *rb = NULL;
+    }
 }
 
 size_t

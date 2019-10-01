@@ -70,6 +70,9 @@ ringbuf_buffer_size(const struct ringbuf_t *rb);
 void
 ringbuf_free(ringbuf_t *rb);
 
+void
+ringbuf_static_free(ringbuf_t *rb);
+
 /*
  * Reset a ring buffer to its initial state (empty).
  */
